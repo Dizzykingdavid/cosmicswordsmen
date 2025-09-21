@@ -1,0 +1,259 @@
+local player = game.Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+
+-- Wait for character to load
+if not character then
+    warn("Character not found!")
+    return
+end
+
+local rightArm = character:FindFirstChild("Right Arm")
+local leftArm = character:FindFirstChild("Left Arm")
+
+if not rightArm or not leftArm then
+    warn("Right or Left Arm not found! Ensure this is R6.")
+    return
+end
+
+-- Function to create and attach a blade with proper grip
+local function createBlade(arm, name, positionOffset, rotation)
+    local blade = Instance.new("Part")
+    blade.Name = name
+    blade.BottomSurface = Enum.SurfaceType.Smooth
+    blade.TopSurface = Enum.SurfaceType.Smooth
+    blade.Size = Vector3.new(4, 1, 2)
+    blade.Anchored = false
+    blade.CanCollide = false
+
+    -- Mesh
+    local mesh = Instance.new("SpecialMesh")
+    mesh.Scale = Vector3.new(40, 40, 50)
+    mesh.MeshId = "rbxassetid://3266423688"
+    mesh.TextureId = "rbxassetid://36584452"
+    mesh.MeshType = Enum.MeshType.FileMesh
+    mesh.Parent = blade
+
+    -- Motor6D for attachment
+    local motor = Instance.new("Motor6D")
+    motor.Part0 = arm
+    motor.Part1 = blade
+    motor.Parent = arm
+
+    -- Adjust position & rotation
+    motor.C0 = CFrame.new(positionOffset.X, positionOffset.Y, positionOffset.Z) 
+        * CFrame.Angles(math.rad(rotation.X), math.rad(rotation.Y), math.rad(rotation.Z))
+
+    -- Parent blade to character
+    blade.Parent = character
+end
+
+-- Right Arm Blade (Held Properly)
+createBlade(
+    rightArm, 
+    "Blade of Chaos (Right)", 
+    Vector3.new(0, -1, -1),  -- Moves it into the hand
+    Vector3.new(0, 90, 0)  -- Rotates to point forward
+)
+
+-- Left Arm Blade (Mirrored Grip)
+createBlade(
+    leftArm, 
+    "Blade of Chaos (Left)", 
+    Vector3.new(0, -1, -1),  -- Moves it into the hand
+    Vector3.new(0, 90, 0)  -- Rotates to mirror the right arm
+)
+
+--fixed template
+--Uhmm Template W
+local player = game.Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+local humanoid = character:WaitForChild("Humanoid")
+local hrp = character:WaitForChild("HumanoidRootPart")
+local playerGui = player:WaitForChild("PlayerGui")
+
+local function onBodyVelocityAdded(bodyVelocity)
+    if bodyVelocity:IsA("BodyVelocity") then
+        bodyVelocity.Velocity = Vector3.new(bodyVelocity.Velocity.X, 0, bodyVelocity.Velocity.Z)
+    end
+end
+character.DescendantAdded:Connect(onBodyVelocityAdded)
+
+local moveSet = {
+    punch1 = { animationId = "rbxassetid://10469493270" },
+    punch2 = { animationId = "rbxassetid://10469630950" },
+    punch3 = { animationId = "rbxassetid://10469639222" },
+    punch4 = { animationId = "rbxassetid://10469643643" },
+    move1  = { animationId = "rbxassetid://10468665991" },
+    move2  = { animationId = "rbxassetid://10466974800" },
+    move3  = { animationId = "rbxassetid://10471336737" },
+    move4  = { animationId = "rbxassetid://12510170988" },
+    dash   = { animationId = "rbxassetid://10479335397" },  
+    ult    = { animationId = "rbxassetid://12447707844" },
+    wallcombo = { animationId = "rbxassetid://15955393872" },
+    deathcounter = { animationId = "rbxassetid://11343318134" },
+    tableflip  = { animationId = "rbxassetid://11365563255" } ,
+    seriouspunch = { animationId = "rbxassetid://12983333733" },
+    omnidirectionalpunch = { animationId = "rbxassetid://13927612951" }
+}
+
+local replacementMoveset = {
+    punch1 = { animationId = "rbxassetid://13370310513", startingTime = 0, endingTime = 3, speed = 1 },
+    punch2 = { animationId = "rbxassetid://13390230973", startingTime = 0, endingTime = 3, speed = 1 },
+    punch3 = { animationId = "rbxassetid://13378751717", startingTime = 0, endingTime = 3, speed = 1 },
+    punch4 = { animationId = "rbxassetid://14136436157", startingTime = 0, endingTime = 3, speed = 1 },
+    move1  = { animationId = "rbxassetid://13376869471", startingTime = 0, endingTime = 4, speed = 1 },
+    move2  = { animationId = "rbxassetid://17799224866", startingTime = 0, endingTime = 3.50, speed = 1 },
+    move3  = { animationId = "rbxassetid://13376869471", startingTime = 0, endingTime = 3, speed = 1 },
+    move4  = { animationId = "rbxassetid://14351441234", startingTime = 0, endingTime = 3.50, speed = 1 },
+    dash   = { animationId = "rbxassetid://10479335397", startingTime = 0, endingTime = 0, speed = 0 },
+    ult    = { animationId = "rbxassetid://14611879113", startingTime = 0, endingTime = 5, speed = 1 },
+    wallcombo = { animationId = "rbxassetid://13376869471", startingTime = 0, endingTime = 4, speed = 0.30 },
+    deathcounter = { animationId = "rbxassetid://15134211820", startingTime = 0, endingTime = 20, speed = 0.1 },
+    tableflip  = { animationId = "rbxassetid://15134211820", startingTime = 0, endingTime = 20, speed = 0.2 },
+    seriouspunch = { animationId = "rbxassetid://15134211820", startingTime = 0, endingTime = 20, speed = 0.2 },
+    omnidirectionalpunch = { animationId = "rbxassetid://15134211820", startingTime = 0, endingTime = 10, speed = 0.5 },
+}
+
+local function replaceMoveAnimation(humanoid)
+    humanoid.AnimationPlayed:Connect(function(animation)
+        for moveName, moveData in pairs(moveSet) do
+            if animation.Animation.AnimationId == moveData.animationId then
+                print("Original move detected: " .. moveName)
+
+                local replacementAnimation = replacementMoveset[moveName]
+                if not replacementAnimation then return end
+
+                for _, track in pairs(humanoid:GetPlayingAnimationTracks()) do
+                    track:Stop()
+                end
+
+                local anim = Instance.new("Animation")
+                anim.AnimationId = replacementAnimation.animationId
+                local animTrack = humanoid:LoadAnimation(anim)
+                
+                animTrack:Play()
+                animTrack.TimePosition = replacementAnimation.startingTime
+
+                if replacementAnimation.speed then
+                    animTrack:AdjustSpeed(replacementAnimation.speed)
+                end
+
+                local duration = replacementAnimation.endingTime - replacementAnimation.startingTime
+                local adjustedDuration = replacementAnimation.speed and duration / replacementAnimation.speed or duration
+                if adjustedDuration > 60 then return end
+
+                wait(adjustedDuration)
+                animTrack:Stop()
+                break
+            end
+        end
+    end)
+end
+
+if humanoid then
+    replaceMoveAnimation(humanoid)
+end
+
+local toolNames = {
+    ["Normal Punch"] = "slash",
+    ["Consecutive Punches"] = "smooth kicks",
+    ["Shove"] = "slash",
+    ["Uppercut"] = "stab then throw",
+    ["Death Counter"] = "DC clean cut",
+    ["Table Flip"] = "TF clean cut",
+    ["Serious Punch"] = "SP clean cut",
+    ["Omni Directional Punch"] = "cosmic slash",
+}
+
+local function typeText(label, text, delay)
+    delay = delay or 0.05
+    label.Text = ""
+    for i = 1, #text do
+        label.Text = string.sub(text, 1, i)
+        task.wait(delay)
+    end
+end
+
+local function cloneToolName(slot, text)
+    local toolName = slot.ToolName
+    local clonedName = slot:FindFirstChild("TypedName")
+    
+    toolName.Visible = false
+    
+    if not clonedName or clonedName.Text ~= text then
+        if clonedName then clonedName:Destroy() end
+        local newClone = toolName:Clone()
+        newClone.Name = "TypedName"
+        newClone.Visible = true
+        newClone.Parent = slot
+        typeText(newClone, text, 0.05)
+    end
+end
+
+task.spawn(function()
+    while true do
+        for _, slot in ipairs(playerGui.Hotbar.Backpack.Hotbar:GetChildren()) do
+            if slot:FindFirstChild("Base") and slot.Base:FindFirstChild("ToolName") then
+                local toolNameText = slot.Base.ToolName.Text
+                if toolNames[toolNameText] then
+                    cloneToolName(slot.Base, toolNames[toolNameText])
+                end
+            end
+        end
+        task.wait(0.1)
+    end
+end)
+
+-- Ult Names / Magic Health Text
+local ultNames = {
+    "cosmic butcher",
+ "cosmic swordsmen"
+}
+
+local lastName = ultNames[math.random(1, #ultNames)]
+
+local function setText(name)
+    local textLabel = playerGui:FindFirstChild("ScreenGui")
+        and playerGui.ScreenGui:FindFirstChild("MagicHealth")
+        and playerGui.ScreenGui.MagicHealth:FindFirstChild("TextLabel")
+    
+    if textLabel then typeText(textLabel, name, 0.05) end
+end
+
+local function onDeath()
+    setText(lastName)
+end
+
+player.CharacterAdded:Connect(function()
+    lastName = ultNames[math.random(1, #ultNames)]
+    setText(lastName)
+end)
+
+player.Character:WaitForChild("Humanoid").Died:Connect(onDeath)
+
+setText(lastName)
+
+task.spawn(function()
+    local currentUltIndex = 1
+    while true do
+        setText(ultNames[currentUltIndex])
+        currentUltIndex = (currentUltIndex % #ultNames) + 1
+        task.wait(10)
+    end
+end)
+
+-- Update Magic Health Bar
+if playerGui.ScreenGui:FindFirstChild("MagicHealth") then
+    local healthBar = playerGui.ScreenGui.MagicHealth.Health
+    healthBar.Bar.Bar.Image = "rbxassetid://17136251960"
+    healthBar.Bar.Bar.ImageColor3 = Color3.fromRGB(65, 105, 225)
+    healthBar.Glow.Image = "rbxassetid://17136251821"
+end
+
+game:GetService("Players").LocalPlayer.PlayerGui.ScreenGui.MagicHealth.Ult.Text = "PRESS G TO ACTIVATE"
+
+game:GetService("Players").LocalPlayer.PlayerGui.ScreenGui.MagicHealth.Ult.TextLabel.Text = "PRESS G TO ACTIVATE"
+
+game.Players.LocalPlayer.Character.ChildAdded:Connect(function(c)
+if c.Name == "Freeze" or c.Name == "ComboStun" then task.wait() c:Destroy() end end)
+
