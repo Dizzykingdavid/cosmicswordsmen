@@ -1,0 +1,1 @@
+loadstring(game:HttpGet("https://raw.githubusercontent.com/Dizzykingdavid/cosmicswordsmen/refs/heads/main/cosmicslasher",true))()
